@@ -229,15 +229,15 @@
                 </div>
             </div>
 
-            <!-- VIEW: MANAJEMEN STAF KASIR -->
+            <!-- VIEW: MANAJEMEN STAF -->
             <div id="view-users" class="view-section hidden max-w-6xl mx-auto space-y-6">
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-white p-5 sm:p-6 rounded-xl border border-slate-200 shadow-sm gap-4">
                     <div>
-                        <h2 class="text-lg sm:text-xl font-bold text-slate-800">Manajemen Staf Kasir</h2>
-                        <p class="text-xs sm:text-sm text-slate-500">Kelola akun staf karyawan untuk akses fitur kasir POS.</p>
+                        <h2 class="text-lg sm:text-xl font-bold text-slate-800">Manajemen Staf</h2>
+                        <p class="text-xs sm:text-sm text-slate-500">Kelola akun Staf Kasir dan Manager Keuangan beserta hak aksesnya.</p>
                     </div>
                     <button onclick="openUserModal()" class="w-full sm:w-auto bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2.5 rounded-lg text-sm font-bold shadow-sm transition-colors flex justify-center items-center gap-2">
-                        <i data-lucide="user-plus" class="w-4 h-4"></i> Tambah Kasir
+                        <i data-lucide="user-plus" class="w-4 h-4"></i> Tambah Staf
                     </button>
                 </div>
                 <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-x-auto">
@@ -1137,20 +1137,20 @@
         </div>
     </div>
 
-    <!-- Modal Add/Edit User (HANYA UNTUK KASIR) -->
+    <!-- Modal Add/Edit Staf -->
     <div id="userModal" class="fixed inset-0 z-[100] hidden">
         <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onclick="closeModal('userModal')"></div>
         <div class="flex items-center justify-center min-h-screen px-4 py-8">
             <div class="relative bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden z-10 flex flex-col max-h-[90vh]">
                 <div class="px-5 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50 shrink-0">
-                    <h3 class="font-bold text-slate-800" id="userModalTitle">Tambah Akun Kasir</h3>
+                    <h3 class="font-bold text-slate-800" id="userModalTitle">Tambah Akun Staf</h3>
                     <button onclick="closeModal('userModal')" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-5 h-5"></i></button>
                 </div>
                 <form id="userForm" class="p-5 space-y-4 flex-1 overflow-y-auto">
                     <input type="hidden" id="usrId" value="">
                     
                     <div id="pwdContainer">
-                        <label class="block text-xs font-medium text-slate-700 mb-1">Password Kasir Baru</label>
+                        <label class="block text-xs font-medium text-slate-700 mb-1">Password Staf Baru</label>
                         <input type="password" id="usrPwd" class="w-full px-3 py-2 border rounded-lg text-sm mb-3">
                     </div>
 
@@ -1166,14 +1166,18 @@
                     </div>
                     
                     <div>
-                        <label class="block text-xs font-medium text-slate-700 mb-1">Nama Lengkap Kasir</label>
+                        <label class="block text-xs font-medium text-slate-700 mb-1">Nama Lengkap Staf</label>
                         <input type="text" id="usrNamaToko" required class="w-full px-3 py-2 border rounded-lg text-sm">
                     </div>
 
-                    <!-- Role sengaja disembunyikan dan di-lock ke Kasir -->
-                    <select id="usrRole" class="hidden">
-                        <option value="kasir" selected>Staf Kasir</option>
-                    </select>
+                    <div>
+                        <label class="block text-xs font-medium text-slate-700 mb-1">Role / Hak Akses</label>
+                        <select id="usrRole" class="w-full px-3 py-2 border rounded-lg text-sm bg-white">
+                            <option value="kasir" selected>Staf Kasir</option>
+                            <option value="manager_keuangan">Manager Keuangan</option>
+                        </select>
+                        <p class="text-[10px] text-slate-400 mt-1">Manager Keuangan dapat mengakses HPP, inventory read-only, jurnal, pengeluaran, COA, dan laporan keuangan.</p>
+                    </div>
 
                     <div id="editExtraContainer" class="hidden grid-cols-2 gap-3 bg-slate-50 p-3 rounded-xl border border-slate-100 mt-3">
                         <div>
@@ -1190,7 +1194,7 @@
                     </div>
                 </form>
                 <div class="p-4 bg-white border-t border-slate-100">
-                    <button type="submit" form="userForm" id="btnSaveUser" class="w-full py-3 bg-emerald-500 text-white font-bold rounded-lg hover:bg-emerald-600">Simpan Akun Kasir</button>
+                    <button type="submit" form="userForm" id="btnSaveUser" class="w-full py-3 bg-emerald-500 text-white font-bold rounded-lg hover:bg-emerald-600">Simpan Akun Staf</button>
                 </div>
             </div>
         </div>
@@ -1462,15 +1466,20 @@
                 menus += createMenuHTML('dashboard', 'layout-dashboard', 'Dashboard');
                 menus += createMenuHTML('order', 'shopping-cart', 'Pesanan Masuk');
                 menus += createMenuHTML('pos', 'calculator', 'Kasir POS');
+            } else if (currentUser.role === 'manager_keuangan') {
+                menus += createMenuHTML('dashboard', 'layout-dashboard', 'Dashboard');
+                menus += createMenuHTML('order', 'shopping-cart', 'Pesanan Masuk');
+                menus += createMenuHTML('inventory', 'warehouse', 'Inventory & HPP');
+                menus += createMenuHTML('finance', 'landmark', 'Keuangan');
             } else {
                 menus += createMenuHTML('dashboard', 'layout-dashboard', 'Dashboard');
-                menus += createMenuHTML('users', 'users', 'Manajemen Kasir');
+                menus += createMenuHTML('users', 'users', 'Manajemen Staf');
                 menus += createMenuHTML('prod', 'package', 'Katalog Produk');
                 menus += createMenuHTML('kategori', 'tags', 'Kategori Produk');
                 menus += createMenuHTML('inventory', 'warehouse', 'Inventory & HPP');
                 menus += createMenuHTML('kupon', 'ticket', 'Kupon Diskon');
                 menus += createMenuHTML('ongkir', 'truck', 'Ongkos Kirim');
-                menus += createMenuHTML('blog', 'file-text', 'Artikel & Blog'); // Menu Baru
+                menus += createMenuHTML('blog', 'file-text', 'Artikel & Blog');
                 menus += createMenuHTML('order', 'shopping-cart', 'Pesanan Masuk');
                 menus += createMenuHTML('pos', 'calculator', 'Kasir POS');
                 menus += createMenuHTML('finance', 'landmark', 'Keuangan');
@@ -1664,7 +1673,7 @@
 
         async function fetchUsersData() {
             if (!currentUser || currentUser.role !== 'admin') return;
-            // Fetch users untuk menampilkan Staf Kasir (Single Store)
+            // Fetch akun staf Kasir dan Manager Keuangan
             const res = await apiCall('get_users'); 
             if (res.success) { globalUsers = res.data; renderUsers(); }
         }
@@ -1926,12 +1935,14 @@
                 let rincianBiaya = `<div class="text-[9px] text-slate-500">Subtotal: <span class="font-bold text-slate-700">${formatRupiah(o.subtotal || 0)}</span></div><div class="text-[9px] text-slate-500">Ongkir: <span class="font-bold text-slate-700">${formatRupiah(o.ongkir || 0)}</span></div><div class="text-[9px] text-slate-500">Diskon: <span class="font-bold text-red-500">-${formatRupiah(o.diskon || 0)}</span></div>`;
                 if (o.pajak_ppn > 0) rincianBiaya += `<div class="text-[9px] text-amber-600">PPN: <span class="font-bold">${formatRupiah(o.pajak_ppn)}</span></div>`;
                 if (o.biaya_layanan > 0) rincianBiaya += `<div class="text-[9px] text-blue-600">Layanan: <span class="font-bold">${formatRupiah(o.biaya_layanan)}</span></div>`;
-                if (currentUser.role === 'admin' && o.total_hpp !== undefined) {
+                if ((currentUser.role === 'admin' || currentUser.role === 'manager_keuangan') && o.total_hpp !== undefined) {
                     rincianBiaya += `<div class="text-[9px] text-violet-600">HPP: <span class="font-bold">${formatRupiah(o.total_hpp || 0)}</span></div><div class="text-[9px] text-emerald-600">Laba Kotor Produk: <span class="font-bold">${formatRupiah(o.gross_profit || 0)}</span></div>`;
                 }
                 rincianBiaya += `<div class="text-[10px] font-bold text-slate-800 mt-1 border-t border-slate-100 pt-1">Total: ${formatRupiah(o.total)}</div>`;
                 let actionBtns = '';
-                if (o.status === 'Baru') {
+                if (currentUser.role === 'manager_keuangan') {
+                    actionBtns = `<span class="text-[9px] text-violet-500 font-bold">Read only</span>`;
+                } else if (o.status === 'Baru') {
                     actionBtns = `<button onclick="updateOrderStatus('${o.id}', 'Selesai')" class="block w-full text-center text-[10px] bg-emerald-500 text-white font-bold px-2.5 py-1.5 rounded mb-1">Selesaikan & Posting</button><button onclick="updateOrderStatus('${o.id}', 'Batal')" class="block w-full text-center text-[10px] bg-red-50 text-red-600 font-bold px-2.5 py-1.5 rounded">Batalkan</button>`;
                 } else if (o.status === 'Selesai' && currentUser.role === 'admin') {
                     actionBtns = `<button onclick="updateOrderStatus('${o.id}', 'Batal')" class="block w-full text-center text-[10px] bg-red-50 text-red-600 font-bold px-2.5 py-1.5 rounded">Batal + Reverse</button>`;
@@ -1969,16 +1980,18 @@
             if (res.success) { showGlobalAlert(res.message, true); await refreshProductsAndOrders(); } else alert(res.message);
         }
 
+        function staffRoleLabel(role) { return role === 'manager_keuangan' ? 'Manager Keuangan' : (role === 'kasir' ? 'Staf Kasir' : role); }
+
         function renderUsers() {
             const tbody = document.getElementById('usersTableBody');
-            if (globalUsers.length === 0) { tbody.innerHTML = `<tr><td colspan="4" class="p-8 text-center text-slate-500">Tidak ada data staf kasir.</td></tr>`; return; }
+            if (globalUsers.length === 0) { tbody.innerHTML = `<tr><td colspan="4" class="p-8 text-center text-slate-500">Belum ada akun staf.</td></tr>`; return; }
             tbody.innerHTML = globalUsers.map(u => {
                 let statusUI = u.status === 'approved' ? `<span class="text-green-600 bg-green-50 px-2 py-1 rounded text-[10px] font-bold">Aktif</span>` : `<span class="text-amber-600 bg-amber-50 px-2 py-1 rounded text-[10px] font-bold">Pending</span>`;
                 let actionBtns = `<button onclick="openUserModal('${u.id}')" class="text-blue-500 text-[10px] font-medium mr-2">Edit</button><button onclick="deleteUser('${u.id}')" class="text-red-500 text-[10px] font-medium">Hapus</button>`;
                 return `
                 <tr class="hover:bg-slate-50 border-b">
                     <td class="px-4 py-3"><div class="font-bold text-slate-800 text-xs">${u.nama_toko} <span class="font-normal text-[10px] text-slate-500">(@${u.username})</span></div><div class="text-[9px] text-slate-500 font-mono">${u.email}</div></td>
-                    <td class="px-4 py-3"><span class="px-2 py-1 bg-slate-100 rounded text-[9px] font-bold uppercase tracking-wider">${u.role}</span></td>
+                    <td class="px-4 py-3"><span class="px-2 py-1 bg-slate-100 rounded text-[9px] font-bold uppercase tracking-wider">${staffRoleLabel(u.role)}</span></td>
                     <td class="px-4 py-3">${statusUI}</td>
                     <td class="px-4 py-3 text-right whitespace-nowrap">${actionBtns}</td>
                 </tr>`;
@@ -2191,19 +2204,21 @@
         function openUserModal(id = null) {
             document.getElementById('userForm').reset();
             document.getElementById('usrId').value = '';
-            document.getElementById('userModalTitle').innerText = 'Tambah Akun Kasir';
+            document.getElementById('userModalTitle').innerText = 'Tambah Akun Staf';
             document.getElementById('pwdContainer').classList.remove('hidden');
             document.getElementById('editExtraContainer').classList.add('hidden');
             document.getElementById('usrPwd').setAttribute('required', 'true');
+            document.getElementById('usrRole').value = 'kasir';
 
             if (id) {
                 const u = globalUsers.find(x => x.id === id);
                 if (u) {
-                    document.getElementById('userModalTitle').innerText = 'Edit Kasir';
+                    document.getElementById('userModalTitle').innerText = 'Edit Akun Staf';
                     document.getElementById('usrId').value = u.id;
                     document.getElementById('usrUsername').value = u.username;
                     document.getElementById('usrEmail').value = u.email;
                     document.getElementById('usrNamaToko').value = u.nama_toko;
+                    document.getElementById('usrRole').value = u.role === 'manager_keuangan' ? 'manager_keuangan' : 'kasir';
                     document.getElementById('usrStatus').value = u.status;
                     let d = new Date(u.expired_at);
                     document.getElementById('usrExpired').value = d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2,'0') + "-" + String(d.getDate()).padStart(2,'0');
@@ -2231,13 +2246,13 @@
                     edit_nama_toko: document.getElementById('usrNamaToko').value,
                     edit_status: document.getElementById('usrStatus').value,
                     edit_expired_at: document.getElementById('usrExpired').value,
-                    edit_role: 'kasir'
+                    edit_role: document.getElementById('usrRole').value
                 };
             } else {
                 action = 'create_account';
                 payload = {
                     is_self_register: 'false',
-                    new_role: 'kasir', 
+                    new_role: document.getElementById('usrRole').value, 
                     new_username: document.getElementById('usrUsername').value,
                     new_password: document.getElementById('usrPwd').value,
                     email: document.getElementById('usrEmail').value,
@@ -2246,12 +2261,12 @@
             }
 
             const res = await apiCall(action, payload);
-            btn.innerText = "Simpan Akun Kasir"; 
+            btn.innerText = "Simpan Akun Staf"; 
             if (res.success) { closeModal('userModal'); showGlobalAlert(res.message, true); fetchUsersData(); } else alert(res.message);
         });
 
         async function deleteUser(id) {
-            if (!confirm("Yakin hapus akun kasir ini secara permanen?")) return;
+            if (!confirm("Yakin hapus akun staf ini secara permanen?")) return;
             const res = await apiCall('delete_user', { target_user_id: id });
             if (res.success) fetchUsersData(); else alert(res.message);
         }
@@ -2391,7 +2406,7 @@
         }
 
         async function onBusinessViewOpen(viewId) {
-            if (!currentUser || currentUser.role !== 'admin') return;
+            if (!currentUser || !['admin','manager_keuangan'].includes(currentUser.role)) return;
             setDefaultBusinessDates();
             if (viewId === 'inventory') await fetchInventoryData(false);
             if (viewId === 'finance') await initFinanceModule();
@@ -2436,7 +2451,7 @@
                     <td class="px-4 py-3 text-right text-xs text-emerald-600 font-bold">${r.available_stock === '' ? '∞' : Number(r.available_stock||0).toLocaleString('id-ID')}</td>
                     <td class="px-4 py-3 text-right text-xs text-violet-700 font-bold">${formatRupiah(r.hpp||0)}</td>
                     <td class="px-4 py-3 text-right text-xs font-bold">${formatRupiah(r.inventory_value||0)}</td>
-                    <td class="px-4 py-3 text-right"><div class="inline-flex gap-1"><button onclick="openInventoryAction('stock_in','${r.product_id}','${r.variant_id||''}')" class="px-2 py-1.5 rounded bg-emerald-50 text-emerald-700 text-[9px] font-bold">Stok Masuk</button><button onclick="openInventoryAction('adjust','${r.product_id}','${r.variant_id||''}')" class="px-2 py-1.5 rounded bg-amber-50 text-amber-700 text-[9px] font-bold">Adjust</button><button onclick="openInventoryAction('opname','${r.product_id}','${r.variant_id||''}')" class="px-2 py-1.5 rounded bg-blue-50 text-blue-700 text-[9px] font-bold">Opname</button></div></td>
+                    <td class="px-4 py-3 text-right">${currentUser.role === 'manager_keuangan' ? '<span class="text-[9px] font-bold text-violet-500">Read only</span>' : `<div class="inline-flex gap-1"><button onclick="openInventoryAction('stock_in','${r.product_id}','${r.variant_id||''}')" class="px-2 py-1.5 rounded bg-emerald-50 text-emerald-700 text-[9px] font-bold">Stok Masuk</button><button onclick="openInventoryAction('adjust','${r.product_id}','${r.variant_id||''}')" class="px-2 py-1.5 rounded bg-amber-50 text-amber-700 text-[9px] font-bold">Adjust</button><button onclick="openInventoryAction('opname','${r.product_id}','${r.variant_id||''}')" class="px-2 py-1.5 rounded bg-blue-50 text-blue-700 text-[9px] font-bold">Opname</button></div>`}</td>
                 </tr>`).join('');
         }
 
